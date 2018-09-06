@@ -5,19 +5,22 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="q" placeholder="Title, author or ISBN" type="text"/>
-            <button class="btn btn-primary" type="submit">Go</button>
+    <form class="form-inline" action="/" method="post">
+        <div class="form-group mb-2">
+            <label for="search" class="sr-only">Title, author or ISBN</label>
+            <input autocomplete="off" autofocus class="form-control" id="search" name="q" placeholder="Title, author or ISBN" type="text"/>
         </div>
+        <button class="btn btn-primary mx-sm-2 mb-2" type="submit">Go</button>
     </form>
     {% if q %}
-        <h3>Search results for <b>{{ q }}</b>:</h3>
+        <div class="pt-3 pb-3">
+            <h3>Search results for <b>{{ q }}</b>:</h3>
+        </div>
         {% if not books %}
             <h3>Sorry, we didn't find anything :( </h3>
         {% else %}
                 {% for book in books %}
-                    <p>{{book.title}} by {{book.author}}, {{book.year}}</p>
+                    <p><a href="/book/{{book.isbn}}">{{book.title}} by {{book.author}}, {{book.year}}</a></p>
                 {% endfor %}
         {% endif %}
     {% endif %}

@@ -1,7 +1,8 @@
-import os
-
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, session
 from functools import wraps
+import requests
+
+goodreadskey = "pbx1XtPnZ3i94x8NB40w"
 
 
 def apology(message, code=400):
@@ -16,7 +17,8 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
-    return render_template("apology.html", top=code, bottom=escape(message)), code
+    return render_template("apology.html",
+                           top=code, bottom=escape(message)), code
 
 
 def login_required(f):
@@ -31,3 +33,21 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+def goodread(isbns):
+    """
+    Request Goodreads API for reviews count and average rating
+    """
+
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                       params={"key": goodreadskey, "isbns": isbns})
+
+    if res.status_code == 200:
+        rating = {}
+        rating["count"] = res.json()["books"][0]["work_ratings_count"]
+        rating["average"] = res.json()["books"][0]["average_rating"]
+        return rating
+
+    else:
+        return None
